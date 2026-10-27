@@ -58,19 +58,22 @@ def send_to_telegram(data: dict):
         return
 
     # Формируем текст в формате Markdown
+    summary = data.get("summary", {})
     msg = f"📊 *Еженедельная сводка по отзывам*\n\n"
-    msg += f"🔹 Всего отзывов: {data['summary']['total_reviews']}\n"
-    msg += f"⭐️ Средний рейтинг: {data['summary']['avg_rating']}\n\n"
+    msg += f"🔹 Всего отзывов: {summary.get('total_reviews', 'N/A')}\n"
+    msg += f"⭐️ Средний рейтинг: {summary.get('avg_rating', 'N/A')}\n\n"
 
     msg += "📌 *Основные темы:*\n"
-    for topic, count in data["topics"].items():
+    for topic, count in data.get("topics", {}).items():
         msg += f"• {topic}: {count}\n"
 
     msg += "\n🚨 *Топ жалоб:*\n"
-    for comp in data["top_complaints"]:
-        msg += f'• *{comp["issue"]}* ({comp["sku"]}):\n  _"{comp["quote"]}"_\n'
+    for comp in data.get("top_complaints", []):
+        msg += (
+            f'• *{comp.get("issue")}* ({comp.get("sku")}):\n  _"{comp.get("quote")}"_\n'
+        )
 
-    msg += f"\n📈 *Динамика к прошлой неделе (WoW):*\n_{data['wow_change']}_\n"
+    msg += f"\n📈 *Динамика к прошлой неделе (WoW):*\n_{data.get('wow_change', 'Нет данных')}_\n"
     msg += "\n🤖 Сгенерировано AI-ассистентом"
 
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
