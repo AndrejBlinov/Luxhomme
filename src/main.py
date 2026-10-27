@@ -27,47 +27,28 @@ def load_reviews(file_path: str) -> str:
 
 
 def analyze_with_ai(reviews_text: str, prompt_path: str) -> dict:
-    """Отправляет данные в LLM и получает JSON-ответ"""
-    with open(prompt_path, "r", encoding="utf-8") as f:
-        system_prompt = f.read()
+    try:
+        with open(prompt_path, "r", encoding="utf-8") as f:
+            system_prompt = f.read()
 
-    user_prompt = f"Проанализируй следующие данные отзывов:\n{reviews_text}"
+        user_prompt = f"Проанализируй следующие данные отзывов:\n{reviews_text}"
 
-    client = OpenAI(api_key=AI_API_KEY)
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        response_format={"type": "json_object"},  # Важно для строгого JSON!
-    )
-    return json.loads(response.choices[0].message.content)
+        # РЕАЛЬНЫЙ ВЫЗОВ API (готов к работе)
+        client = OpenAI(api_key=AI_API_KEY)
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            response_format={"type": "json_object"},
+        )
 
-    # Тест. Блок закоментировать, при переключении на реальную LLM
-    # print("⚠️ Используется мок-ответ AI. Подключи реальный API в коде.")
-    # return {
-    #     "summary": {"total_reviews": 40, "avg_rating": 3.2},
-    #     "topics": {
-    #         "Брак/Качество": 15,
-    #         "Доставка": 8,
-    #         "Шум/Производительность": 7,
-    #         "Позитив": 10,
-    #     },
-    #     "top_complaints": [
-    #         {
-    #             "issue": "Массовый брак помпы",
-    #             "sku": "CM-2010",
-    #             "quote": "Третий подряд брак! Что за партия такая?",
-    #         },
-    #         {
-    #             "issue": "Проблемы с доставкой",
-    #             "sku": "AF-5501",
-    #             "quote": "Доставили через 2 недели, курьер хамил.",
-    #         },
-    #     ],
-    #     "wow_change": "Резкий всплеск жалоб на брак (помпа, бойлер) по кофемашинам CM-2010 во вторую неделю.",
-    # }
+        return json.loads(response.choices[0].message.content)
+
+    except Exception as e:
+        print(f"❌ Ошибка при вызове LLM: {e}")
+        return {}
 
 
 def send_to_telegram(data: dict):
