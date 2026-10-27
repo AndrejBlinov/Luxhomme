@@ -13,19 +13,27 @@
 ```bash
 git clone https://github.com/AndrejBlinov/Luxhomme.git
 cd Luxhomme
-
+```
 ### 2. Создание виртуального окружения
 # Windows
+```bash
 python -m venv venv
+```
 
 # Mac/Linux
+```bash
 python3 -m venv venv
+```
 
 ### 3. Активация окружения
+```bash
 .\venv\Scripts\Activate.ps1
+```
 
 ### 4. Установка зависимостей
+```bash
 pip install -r requirements.txt
+```
 
 ### 5. Настройка переменных окружения
 Создайте файл .env в корне проекта (или скопируйте из .env.example) и заполните его своими ключами
